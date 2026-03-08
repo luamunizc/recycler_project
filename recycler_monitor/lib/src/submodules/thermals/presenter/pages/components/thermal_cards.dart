@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recycler_monitor/src/presenter/styles.dart';
+import 'package:recycler_monitor/src/styles/styles.dart';
 
 class ThermalCards extends StatelessWidget {
   final String part;

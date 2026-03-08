@@ -1,8 +1,12 @@
+// recycler_monitor\lib\src\submodules\thermals\presenter\stores\thermals_store.dart
+
 import 'dart:async';
 import 'package:mobx/mobx.dart';
 import 'package:recycler_monitor/src/submodules/thermals/domain/repositories/thermals_repository.dart';
 
 part 'thermals_store.g.dart';
+
+enum ThermalStatus { ok, error, connecting }
 
 class ThermalStore = _ThermalStoreBase with _$ThermalStore;
 
@@ -21,21 +25,29 @@ abstract class _ThermalStoreBase with Store {
   @observable
   double tSilo = 0;
 
+  @observable
+  ThermalStatus status = ThermalStatus.connecting;
+
+  @observable
+  String errorMessage = '';
+
   @action
   Future<void> updateTemperatures() async {
     try {
-      // Como o repo atualiza o cache no primeiro método, chamamos em sequência
       tNozzle = await repository.getNozzleTemp();
       tTube = await repository.getTubeTemp();
       tSilo = await repository.getSiloTemp();
+      status = ThermalStatus.ok;
+      errorMessage = '';
     } catch (e) {
-      // ignore: avoid_print
-      print("Erro ao atualizar temperaturas: $e");
+      status = ThermalStatus.error;
+      errorMessage = 'Sem conexão com o reciclador.\nVerifique a rede Wi-Fi.';
     }
   }
 
   void startMonitoring() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    updateTemperatures(); // busca imediata ao entrar na tela
+    _timer = Timer.periodic(const Duration(seconds: 2), (_) {
       updateTemperatures();
     });
   }
