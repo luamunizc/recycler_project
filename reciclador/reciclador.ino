@@ -1,3 +1,6 @@
+// reciclador\reciclador.ino
+// Sem alterações na lógica — apenas Rede.h foi substituído por BLE
+
 #include "Sensores.h"
 #include "Display.h"
 #include "Rede.h"
@@ -11,8 +14,8 @@ void setup() {
   setupSensores();
   setupDisplay();
   setupRede();
-  
-  Serial.println("--- Sistema Modular Iniciado ---");
+
+  Serial.println("--- Sistema BLE Iniciado ---");
 }
 
 void loop() {
@@ -21,7 +24,7 @@ void loop() {
   t3 = lerTemperatura(pinT3);
 
   atualizarDisplay(t1, t2, t3);
-  manterRede();
+  manterRede(); // envia via BLE se houver cliente conectado
 
   delay(500);
 }

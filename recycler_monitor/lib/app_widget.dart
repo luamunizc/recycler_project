@@ -1,4 +1,4 @@
-// recycler_monitor\lib\app_widget.dart
+// lib\app_widget.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';

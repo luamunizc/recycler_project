@@ -1,100 +1,78 @@
+// reciclador\Rede.h
+// Comunicação via BLE — substitui o Wi-Fi completamente
+
 #ifndef REDE_H
 #define REDE_H
 
-#include <WiFi.h>
-#include <WebServer.h>
-#include <Preferences.h>
-#include <ESPmDNS.h>
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
 
-WebServer server(80);
-Preferences preferences;
+// UUIDs do serviço e característica de temperatura
+// Gerados aleatoriamente — não altere, pois o app Flutter usa os mesmos
+#define SERVICE_UUID        "12345678-1234-1234-1234-123456789abc"
+#define CHARACTERISTIC_UUID "abcd1234-ab12-ab12-ab12-abcdef123456"
+
+BLEServer*         pServer         = nullptr;
+BLECharacteristic* pCharacteristic = nullptr;
+bool               deviceConnected = false;
 
 extern double t1;
 extern double t2;
 extern double t3;
 
-String ssidSalvo = "";
-String senhaSalva = "";
+// Callbacks de conexão/desconexão
+class ServerCallbacks : public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer) override {
+    deviceConnected = true;
+    Serial.println("[BLE] Cliente conectado");
+  }
 
-void setupRotaStatus() {
-  server.on("/api/status", HTTP_GET, []() {
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "application/json", "{\"status\":\"online\"}");
-  });
-}
-
-void setupRotasConfiguracao() {
-  setupRotaStatus();
-  server.on("/scan", HTTP_GET, []() {
-    int n = WiFi.scanNetworks();
-    String json = "[";
-    for (int i = 0; i < n; ++i) {
-      if (i > 0) json += ",";
-      json += "\"" + WiFi.SSID(i) + "\"";
-    }
-    json += "]";
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "application/json", json);
-  });
-
-  server.on("/salvar_wifi", HTTP_POST, []() {
-    if (server.hasArg("ssid") && server.hasArg("password")) {
-      preferences.begin("wifi_creds", false);
-      preferences.putString("ssid", server.arg("ssid"));
-      preferences.putString("password", server.arg("password"));
-      preferences.end();
-      
-      server.sendHeader("Access-Control-Allow-Origin", "*");
-      server.send(200, "application/json", "{\"status\":\"sucesso\"}");
-      
-      delay(1000);
-      ESP.restart(); 
-    }
-  });
-}
-
-void setupRotasSensores() {
-  setupRotaStatus();
-  server.on("/api/temperaturas", HTTP_GET, []() {
-    String json = "{\"t1\":" + String(t1, 1) + ",\"t2\":" + String(t2, 1) + ",\"t3\":" + String(t3, 1) + "}";
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "application/json", json);
-  });
-}
+  void onDisconnect(BLEServer* pServer) override {
+    deviceConnected = false;
+    Serial.println("[BLE] Cliente desconectado — reiniciando advertising");
+    pServer->startAdvertising();
+  }
+};
 
 void setupRede() {
-  preferences.begin("wifi_creds", true);
-  ssidSalvo = preferences.getString("ssid", "");
-  senhaSalva = preferences.getString("password", "");
-  preferences.end();
+  BLEDevice::init("Reciclador"); // Nome visível no scan do celular
 
-  if (ssidSalvo != "") {
-    WiFi.begin(ssidSalvo.c_str(), senhaSalva.c_str());
-    int tentativas = 0;
-    while (WiFi.status() != WL_CONNECTED && tentativas < 20) {
-      delay(500);
-      tentativas++;
-    }
-  }
+  pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new ServerCallbacks());
 
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("Conectado! IP: " + WiFi.localIP().toString());
-    setupRotasSensores();
-  } else {
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP("Reciclador_Config");
-    setupRotasConfiguracao();
-  }
+  BLEService* pService = pServer->createService(SERVICE_UUID);
 
-  if (MDNS.begin("reciclador")) {
-    Serial.println("mDNS: http://reciclador.local");
-  }
+  pCharacteristic = pService->createCharacteristic(
+    CHARACTERISTIC_UUID,
+    BLECharacteristic::PROPERTY_READ |
+    BLECharacteristic::PROPERTY_NOTIFY
+  );
 
-  server.begin();
+  // Permite que o cliente se inscreva para receber notificações automáticas
+  pCharacteristic->addDescriptor(new BLE2902());
+
+  pService->start();
+
+  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->setScanResponse(true);
+  BLEDevice::startAdvertising();
+
+  Serial.println("[BLE] Advertising iniciado como 'Reciclador'");
 }
 
 void manterRede() {
-  server.handleClient();
+  if (!deviceConnected) return;
+
+  // Monta JSON com as temperaturas e notifica o cliente
+  String json = "{\"t1\":" + String(t1, 1) +
+                ",\"t2\":" + String(t2, 1) +
+                ",\"t3\":" + String(t3, 1) + "}";
+
+  pCharacteristic->setValue(json.c_str());
+  pCharacteristic->notify();
 }
 
 #endif
