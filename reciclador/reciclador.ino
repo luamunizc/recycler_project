@@ -1,9 +1,10 @@
-// reciclador\reciclador.ino
-// Sem alterações na lógica — apenas Rede.h foi substituído por BLE
-
 #include "Sensores.h"
 #include "Display.h"
 #include "Rede.h"
+
+#define pinT1 1
+#define pinT2 2
+#define pinT3 4
 
 double t1 = 0, t2 = 0, t3 = 0;
 
@@ -24,7 +25,7 @@ void loop() {
   t3 = lerTemperatura(pinT3);
 
   atualizarDisplay(t1, t2, t3);
-  manterRede(); // envia via BLE se houver cliente conectado
+  manterRede();
 
   delay(500);
 }

@@ -57,7 +57,7 @@ abstract class _BleStoreBase with Store {
     try {
       await service.connect(result.device);
       status = BleStatus.connected;
-      Modular.to.pushReplacementNamed('/thermals/');
+      Modular.to.pushReplacementNamed('/thermals/', arguments: service);
     } catch (e) {
       status = BleStatus.error;
       errorMessage = 'Falha ao conectar: $e';
