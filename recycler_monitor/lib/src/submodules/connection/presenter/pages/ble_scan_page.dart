@@ -1,5 +1,3 @@
-// lib\src\submodules\connection\presenter\pages\ble_scan_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -31,7 +29,7 @@ class _BleScanPageState extends State<BleScanPage> {
         title: Text(appTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Observer(builder: (_) {
-        // Estado: conectando
+
         if (store.status == BleStatus.connecting) {
           return const Center(
             child: Column(
@@ -45,7 +43,7 @@ class _BleScanPageState extends State<BleScanPage> {
           );
         }
 
-        // Estado: erro
+
         if (store.status == BleStatus.error) {
           return Center(
             child: Padding(

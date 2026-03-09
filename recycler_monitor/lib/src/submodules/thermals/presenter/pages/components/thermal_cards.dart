@@ -10,7 +10,7 @@ class ThermalCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Largura adaptável ao pai (Smartphone)
+      
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Card(
@@ -21,7 +21,7 @@ class ThermalCards extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Se a tela estiver deitada (muito larga), usamos Row, senão Column
+              
               bool isWide = constraints.maxWidth > 400;
 
               return isWide 

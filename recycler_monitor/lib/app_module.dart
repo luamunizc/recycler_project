@@ -1,5 +1,3 @@
-// lib\app_module.dart
-
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:recycler_monitor/src/submodules/connection/ble_module.dart';
 import 'package:recycler_monitor/src/submodules/thermals/thermals_module.dart';

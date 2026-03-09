@@ -1,5 +1,3 @@
-// lib\src\submodules\thermals\presenter\stores\thermals_store.dart
-
 import 'dart:async';
 import 'package:mobx/mobx.dart';
 import 'package:recycler_monitor/src/submodules/connection/services/ble_service.dart';

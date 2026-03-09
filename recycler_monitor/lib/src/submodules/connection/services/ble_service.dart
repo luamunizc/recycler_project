@@ -1,6 +1,3 @@
-// lib\src\submodules\connection\services\ble_service.dart
-// Encapsula toda a lógica de BLE com flutter_blue_plus
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -15,13 +12,11 @@ class BleService {
   BluetoothCharacteristic? _characteristic;
   StreamSubscription? _notifySubscription;
 
-  // Stream que emite os dados de temperatura recebidos via notify
   final _dataController = StreamController<Map<String, double>>.broadcast();
   Stream<Map<String, double>> get dataStream => _dataController.stream;
 
   bool get isConnected => _device != null && (_device?.isConnected ?? false);
 
-  /// Faz scan e retorna os dispositivos BLE encontrados com nome "Reciclador"
   Stream<List<ScanResult>> scanForDevice() {
     FlutterBluePlus.startScan(
       withNames: [_deviceName],
@@ -34,7 +29,6 @@ class BleService {
     FlutterBluePlus.stopScan();
   }
 
-  /// Conecta ao dispositivo e inscreve nas notificações de temperatura
   Future<void> connect(BluetoothDevice device) async {
     _device = device;
     await device.connect(autoConnect: false);
