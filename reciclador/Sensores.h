@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 
-const int pinT1 = 1; 
-const int pinT2 = 2;
-const int pinT3 = 4; 
+const int pinT1 = 4; 
+const int pinT2 = 5;
+const int pinT3 = 6; 
 
 const double R = 50000.0;
 const double beta = 3950.0;

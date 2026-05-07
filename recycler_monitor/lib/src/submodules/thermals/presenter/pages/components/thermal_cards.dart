@@ -15,7 +15,7 @@ class ThermalCards extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Card(
         elevation: 4,
-        color: cardBackground,
+        //color: cardBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),

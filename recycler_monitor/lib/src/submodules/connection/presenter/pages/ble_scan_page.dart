@@ -23,9 +23,9 @@ class _BleScanPageState extends State<BleScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: appBackground,
+      //backgroundColor: appBackground,
       appBar: AppBar(
-        backgroundColor: appBarBackground,
+        //backgroundColor: appBarBackground,
         title: Text(appTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Observer(builder: (_) {
@@ -51,7 +51,7 @@ class _BleScanPageState extends State<BleScanPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.bluetooth_disabled, size: 72, color: Colors.redAccent),
+                  const Icon(Icons.bluetooth_disabled, size: 72), //color: Colors.redAccent),
                   const SizedBox(height: 16),
                   Text(store.errorMessage, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
@@ -69,7 +69,7 @@ class _BleScanPageState extends State<BleScanPage> {
         return Column(
           children: [
             const SizedBox(height: 24),
-            const Icon(Icons.bluetooth_searching, size: 64, color: Colors.deepPurple),
+            const Icon(Icons.bluetooth_searching, size: 64), //color: Colors.deepPurple),
             const SizedBox(height: 12),
             const Text(
               'Procure pelo dispositivo "Reciclador"\ne toque para conectar.',
@@ -118,7 +118,7 @@ class _BleScanPageState extends State<BleScanPage> {
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     child: ListTile(
-                      leading: const Icon(Icons.bluetooth, color: Colors.deepPurple),
+                      leading: const Icon(Icons.bluetooth), //color: Colors.deepPurple),
                       title: Text(
                         result.device.platformName.isNotEmpty
                             ? result.device.platformName

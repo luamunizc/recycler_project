@@ -2,10 +2,6 @@
 #include "Display.h"
 #include "Rede.h"
 
-#define pinT1 1
-#define pinT2 2
-#define pinT3 4
-
 double t1 = 0, t2 = 0, t3 = 0;
 
 void setup() {

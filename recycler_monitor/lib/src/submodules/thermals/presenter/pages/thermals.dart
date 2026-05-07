@@ -31,9 +31,9 @@ class _ThermalsPageState extends State<ThermalsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: appBackground,
+      //backgroundColor: appBackground,
       appBar: AppBar(
-        backgroundColor: appBarBackground,
+        //backgroundColor: appBarBackground,
         title: Text(appTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
@@ -59,7 +59,7 @@ class _ThermalsPageState extends State<ThermalsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.bluetooth_disabled, size: 72, color: Colors.redAccent),
+                  const Icon(Icons.bluetooth_disabled, size: 72,), //color: Colors.redAccent),
                   const SizedBox(height: 16),
                   Text(store.errorMessage, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
