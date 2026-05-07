@@ -11,8 +11,8 @@ void setup() {
   setupSensores();
   setupDisplay();
   setupRede();
-  
-  Serial.println("--- Sistema Modular Iniciado ---");
+
+  Serial.println("--- Sistema BLE Iniciado ---");
 }
 
 void loop() {
