@@ -57,7 +57,7 @@ recycler_project/
 3. Selecione o dispositivo reciclador na lista exibida.
 4. Após a conexão ser estabelecida, a **tela de monitoramento** carregará automaticamente, exibindo as temperaturas em tempo real das três zonas.
 
-![Demonstração de conexão](readme_assets/app_connection_demonstration.gif)
+<img src="readme_assets/app_connection_demonstration.gif" width="30%">
 
 ---
 

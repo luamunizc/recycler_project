@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:recycler_monitor/src/submodules/thermals/presenter/pages/components/thermal_cards.dart';
 import 'package:recycler_monitor/src/submodules/connection/services/ble_service.dart';
 import 'package:recycler_monitor/src/submodules/thermals/presenter/stores/thermals_store.dart';
 import 'package:recycler_monitor/src/styles/styles.dart';
+import 'package:signals_flutter/signals_flutter.dart'; 
 
 class ThermalsPage extends StatefulWidget {
   const ThermalsPage({super.key});
@@ -34,7 +34,10 @@ class _ThermalsPageState extends State<ThermalsPage> {
       //backgroundColor: appBackground,
       appBar: AppBar(
         //backgroundColor: appBarBackground,
-        title: Text(appTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          appTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.bluetooth_disabled_outlined),
@@ -47,48 +50,53 @@ class _ThermalsPageState extends State<ThermalsPage> {
           ),
         ],
       ),
-      body: Observer(builder: (_) {
-        if (store.status == ThermalStatus.connecting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: Watch((_) {
+          if (store.status.value == ThermalStatus.connecting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (store.status == ThermalStatus.error) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.bluetooth_disabled, size: 72,), //color: Colors.redAccent),
-                  const SizedBox(height: 16),
-                  Text(store.errorMessage, textAlign: TextAlign.center),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.bluetooth_searching),
-                    label: const Text('Reconectar'),
-                    onPressed: () => Modular.to.pushReplacementNamed('/connection/'),
-                  ),
-                ],
+          if (store.status.value == ThermalStatus.error) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.bluetooth_disabled,
+                      size: 72,
+                    ), //color: Colors.redAccent),
+                    const SizedBox(height: 16),
+                    Text(store.errorMessage.value, textAlign: TextAlign.center),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.bluetooth_searching),
+                      label: const Text('Reconectar'),
+                      onPressed: () =>
+                          Modular.to.pushReplacementNamed('/connection/'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Column(
+                  children: [
+                    ThermalCards('Motor', store.tMotor.value),
+                    ThermalCards('Cano', store.tTube.value),
+                    ThermalCards('Bico', store.tNozzle.value),
+                  ],
+                ),
               ),
             ),
           );
-        }
-
-        return SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Column(
-                children: [
-                  ThermalCards('Bico', store.tNozzle),
-                  ThermalCards('Cano', store.tTube),
-                  ThermalCards('Silo', store.tSilo),
-                ],
-              ),
-            ),
-          ),
-        );
-      }),
+        },
+      ),
     );
   }
 }

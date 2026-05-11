@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:recycler_monitor/src/submodules/connection/presenter/stores/ble_store.dart';
 import 'package:recycler_monitor/src/styles/styles.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 class BleScanPage extends StatefulWidget {
   const BleScanPage({super.key});
@@ -28,9 +28,9 @@ class _BleScanPageState extends State<BleScanPage> {
         //backgroundColor: appBarBackground,
         title: Text(appTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
-      body: Observer(builder: (_) {
+      body: Watch((_) {
 
-        if (store.status == BleStatus.connecting) {
+        if (store.status.value == BleStatus.connecting) {
           return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +44,7 @@ class _BleScanPageState extends State<BleScanPage> {
         }
 
 
-        if (store.status == BleStatus.error) {
+        if (store.status.value == BleStatus.error) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -53,7 +53,7 @@ class _BleScanPageState extends State<BleScanPage> {
                 children: [
                   const Icon(Icons.bluetooth_disabled, size: 72), //color: Colors.redAccent),
                   const SizedBox(height: 16),
-                  Text(store.errorMessage, textAlign: TextAlign.center),
+                  Text(store.errorMessage.value, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.refresh),
@@ -80,20 +80,20 @@ class _BleScanPageState extends State<BleScanPage> {
 
             // Botão de scan
             ElevatedButton.icon(
-              icon: Icon(store.status == BleStatus.scanning
+              icon: Icon(store.status.value == BleStatus.scanning
                   ? Icons.stop
                   : Icons.search),
-              label: Text(store.status == BleStatus.scanning
+              label: Text(store.status.value == BleStatus.scanning
                   ? 'Parar busca'
                   : 'Buscar Reciclador'),
-              onPressed: store.status == BleStatus.scanning
+              onPressed: store.status.value == BleStatus.scanning
                   ? store.stopScan
                   : store.startScan,
             ),
 
             const SizedBox(height: 16),
 
-            if (store.status == BleStatus.scanning && store.results.isEmpty)
+            if (store.status.value == BleStatus.scanning && store.results.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(16),
                 child: Row(

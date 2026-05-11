@@ -1,73 +1,62 @@
 import 'dart:async';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mobx/mobx.dart';
 import 'package:recycler_monitor/src/submodules/connection/services/ble_service.dart';
-
-part 'ble_store.g.dart';
+import 'package:signals_flutter/signals_core.dart';
 
 enum BleStatus { idle, scanning, connecting, connected, error }
 
-class BleStore = _BleStoreBase with _$BleStore;
-
-abstract class _BleStoreBase with Store {
+ class BleStore {
   final BleService service;
   StreamSubscription? _scanSubscription;
 
-  _BleStoreBase(this.service);
+  BleStore(this.service);
 
-  @observable
-  BleStatus status = BleStatus.idle;
+  final status = signal(BleStatus.idle);
 
-  @observable
-  ObservableList<ScanResult> results = ObservableList();
+  final results = listSignal([]);
 
-  @observable
-  String errorMessage = '';
+  final errorMessage = signal('');
 
-  @action
   void startScan() {
-    status = BleStatus.scanning;
+    status.value = BleStatus.scanning;
     results.clear();
-    errorMessage = '';
+    errorMessage.value = '';
 
     _scanSubscription = service.scanForDevice().listen((scanResults) {
       results
         ..clear()
         ..addAll(scanResults);
     }, onError: (e) {
-      status = BleStatus.error;
-      errorMessage = 'Erro ao escanear: $e';
+      status.value = BleStatus.error;
+      errorMessage.value = 'Erro ao escanear: $e';
     });
   }
 
-  @action
   void stopScan() {
     service.stopScan();
     _scanSubscription?.cancel();
-    if (status == BleStatus.scanning) status = BleStatus.idle;
+    if (status.value == BleStatus.scanning) status.value = BleStatus.idle;
   }
 
-  @action
   Future<void> connectTo(ScanResult result) async {
     stopScan();
-    status = BleStatus.connecting;
-    errorMessage = '';
+    status.value = BleStatus.connecting;
+    errorMessage.value = '';
 
     try {
       await service.connect(result.device);
-      status = BleStatus.connected;
+      status.value = BleStatus.connected;
       Modular.to.pushReplacementNamed('/thermals/', arguments: service);
     } catch (e) {
-      status = BleStatus.error;
-      errorMessage = 'Falha ao conectar: $e';
+      status.value = BleStatus.error;
+      errorMessage.value = 'Falha ao conectar: $e';
     }
   }
 
-  @action
   void reset() {
-    status = BleStatus.idle;
-    errorMessage = '';
+    status.value = BleStatus.idle;
+    errorMessage.value = '';
     results.clear();
   }
 }

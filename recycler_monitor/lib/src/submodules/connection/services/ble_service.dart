@@ -9,7 +9,7 @@ const String _characteristicUuid = 'abcd1234-ab12-ab12-ab12-abcdef123456';
 
 class BleService {
   BluetoothDevice? _device;
-  BluetoothCharacteristic? _characteristic;
+  BluetoothCharacteristic? characteristic;
   StreamSubscription? _notifySubscription;
 
   final _dataController = StreamController<Map<String, double>>.broadcast();
@@ -38,7 +38,7 @@ class BleService {
       if (service.uuid.toString().toLowerCase() == _serviceUuid) {
         for (final c in service.characteristics) {
           if (c.uuid.toString().toLowerCase() == _characteristicUuid) {
-            _characteristic = c;
+            characteristic = c;
             await c.setNotifyValue(true);
             _notifySubscription = c.onValueReceived.listen(_onData);
             return;
@@ -66,7 +66,7 @@ class BleService {
     await _notifySubscription?.cancel();
     await _device?.disconnect();
     _device = null;
-    _characteristic = null;
+    characteristic = null;
   }
 
   void dispose() {

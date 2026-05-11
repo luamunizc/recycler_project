@@ -39,7 +39,7 @@ void atualizarDisplay(double t1, double t2, double t3) {
   display.print("ZONA (T2): "); display.print(t2, 1); display.print(" C");
   
   display.setCursor(0,44);
-  display.print("SILO (T3): "); display.print(t3, 1); display.print(" C");
+  display.print("MOTR (T3): "); display.print(t3, 1); display.print(" C");
 
   display.display();
 }
